@@ -10,7 +10,7 @@ import AddPrinter from './components/AddPrinter';
 import ApolloClient from 'apollo-boost';
 import {ApolloProvider} from 'react-apollo';
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
+  uri: 'http://ec2-52-15-71-122.us-east-2.compute.amazonaws.com:4000/graphql'
 })
 
 function App() {
