@@ -1,53 +1,61 @@
 import React from 'react';
-import {graphql,compose} from 'react-apollo';
-import {addPrinterMutationQuery, getPrintersQuery,getPrinterDetailQuery, deletePrinterQuery} from '../queries/queries.js'
+import { graphql, compose } from 'react-apollo';
+import { addPrinterMutationQuery, getPrintersQuery, getPrinterDetailQuery, deletePrinterQuery } from '../queries/queries.js'
 import PrinterDetails from './PrinterDetails.js';
 import { useState } from "react";
 
 // functional components
 function PrinterList(props) {
 
-    let[selectedPrinter,setSelectedPrinter] = useState(null);
-    async function deletePrinter(printerId){
+    let [selectedPrinter, setSelectedPrinter] = useState(null);
+    async function deletePrinter(printerId) {
         await props.deletePrinterQuery({
-            variables:{
+            variables: {
                 pID: printerId
             },
-            refetchQueries:[{query:getPrintersQuery}]
+            refetchQueries: [{ query: getPrintersQuery }]
         })
     }
     function displayPrinters() {
         let data = props.getPrintersQuery.printers
-         if(props.getPrintersQuery.loading){
-             return(<div>Loading printers list ...</div>);
-         }else{
-             return data.map(printer => {
-                return( <li key={printer.pID}>
-                            <span onClick={(e)=> {setSelectedPrinter(printer.pID)}}>{printer.name} </span>
-                            <button onClick={(e)=> {deletePrinter(printer.pID)}} > delete </button>
-                        </li>
-                      );
-             })
-         }
-     }
-    
+        if (props.getPrintersQuery.loading) {
+            return (<div>Loading printers list ...</div>);
+        } else {
+            if (data && data.length > 0) {
+                return data.map(printer => {
+                    return (<li key={printer.pID}>
+                        <span onClick={(e) => { setSelectedPrinter(printer.pID) }}>{printer.name} </span>
+                        <button onClick={(e) => { deletePrinter(printer.pID) }} > delete </button>
+                    </li>
+                    );
+                })
+            }
+            else {
+                return (<div>No data found</div>);
+            }
+
+
+        }
+    }
+
+
     return (
-      <div  className="App">
-        <ul id="printer-list">
-        {displayPrinters()}
-      </ul>
-      <PrinterDetails printerId={selectedPrinter}></PrinterDetails>
-      </div>
+        <div className="App">
+            <ul id="printer-list">
+                {displayPrinters()}
+            </ul>
+            <PrinterDetails printerId={selectedPrinter}></PrinterDetails>
+        </div>
     );
-  };
+};
 
-  export default 
+export default
 
-  compose(
-     graphql(getPrintersQuery, {name:"getPrintersQuery"}),
-     graphql(getPrinterDetailQuery, {name:"getPrinterDetailQuery"}),
-     graphql(deletePrinterQuery, {name:"deletePrinterQuery"}),
-     graphql(addPrinterMutationQuery,{name: "addPrinterMutationQuery"}),
-    
- )(PrinterList);
+    compose(
+        graphql(getPrintersQuery, { name: "getPrintersQuery" }),
+        graphql(getPrinterDetailQuery, { name: "getPrinterDetailQuery" }),
+        graphql(deletePrinterQuery, { name: "deletePrinterQuery" }),
+        graphql(addPrinterMutationQuery, { name: "addPrinterMutationQuery" }),
+
+    )(PrinterList);
 
